@@ -1,26 +1,31 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+import os
 
-app = Flask(__name__)
-from config import Config
-app.config.from_object(Config)
-db = SQLAlchemy(app)
+application = Flask(__name__)
+
+# Use SQLite as the database
+basedir = os.path.abspath(os.path.dirname(__file__))
+application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'tasks.db')
+application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(application)
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     completed = db.Column(db.Boolean, default=False)
 
-# Create Database Tables
-with app.app_context():
+# Create the database tables
+with application.app_context():
     db.create_all()
 
-@app.route('/')
+@application.route('/')
 def index():
     tasks = Task.query.all()
     return render_template('index.html', tasks=tasks)
 
-@app.route('/add', methods=['POST'])
+@application.route('/add', methods=['POST'])
 def add_task():
     title = request.form.get('title')
     if title:
@@ -29,7 +34,7 @@ def add_task():
         db.session.commit()
     return redirect(url_for('index'))
 
-@app.route('/complete/<int:task_id>')
+@application.route('/complete/<int:task_id>')
 def complete_task(task_id):
     task = Task.query.get(task_id)
     if task:
@@ -37,7 +42,7 @@ def complete_task(task_id):
         db.session.commit()
     return redirect(url_for('index'))
 
-@app.route('/delete/<int:task_id>')
+@application.route('/delete/<int:task_id>')
 def delete_task(task_id):
     task = Task.query.get(task_id)
     if task:
@@ -46,4 +51,4 @@ def delete_task(task_id):
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    application.run(host='0.0.0.0', port=5000)
