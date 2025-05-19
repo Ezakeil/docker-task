@@ -1,0 +1,28 @@
+pipeline {
+    agent any
+
+    environment {
+        COMPOSE_PROJECT_NAME = 'jenkinsbuildapp'
+        COMPOSE_FILE = 'docker-compose.yml'
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git 'https://github.com/Ezakeil/docker-task'
+            }
+        }
+
+        stage('Build & Run App') {
+            steps {
+                sh 'docker-compose -p $COMPOSE_PROJECT_NAME -f $COMPOSE_FILE up -d --build'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline complete.'
+        }
+    }
+}

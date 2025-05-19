@@ -3,11 +3,11 @@ version: '3.8'
 services:
   web:
     build: .
-    container_name: flask-task-manager
+    container_name: jenkins_task_app
     ports:
-      - "5000:5000"
+      - "9090:5000"  # Expose app on port 9090
     volumes:
-      - db-data:/app
+      - .:/app       # Mount current project directory into container
     restart: always
 
 volumes:
