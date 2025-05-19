@@ -4,7 +4,7 @@ import os
 
 application = Flask(__name__)
 
-# Use SQLite as the database
+# Use SQLite as the databaseihidhishdishidshidhsidhisdhishdiowj9ewjiodhiwhdiwhdwidhishdis
 basedir = os.path.abspath(os.path.dirname(__file__))
 application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'tasks.db')
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
